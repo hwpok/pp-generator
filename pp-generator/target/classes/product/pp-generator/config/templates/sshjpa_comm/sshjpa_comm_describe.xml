@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<daoMappingTemplates>
+		<daoMappingTemplate id="JT01" type="comm" enable="true">
+		    <name>通用 SSH JPA DAO 模板</name>
+		    <daoInterfaceTemplateFilePath>config/templates/sshjpa_comm/sshjpa_comm_interface.flt</daoInterfaceTemplateFilePath>
+		    <daoClassTemplateFilePath>config/templates/sshjpa_comm/sshjpa_comm_dao.flt</daoClassTemplateFilePath>
+		    <remark>通用 SSH JPA DAO 模板</remark>
+		</daoMappingTemplate>
+	</daoMappingTemplates>
+</huiWanpengRoot>

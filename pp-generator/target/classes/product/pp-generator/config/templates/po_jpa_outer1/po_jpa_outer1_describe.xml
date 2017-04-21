@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<poTemplates>
+	    <poTemplate id="PT_JPA_02" enable="true">
+	        <name>JPA PO 模板/普通外部类复合主键</name>
+	        <pkTemplateFilePath>config/templates/po_jpa_outer1/pk_jpa_outer1.flt</pkTemplateFilePath>
+	        <poTemplateFilePath>config/templates/po_jpa_outer1/po_jpa_outer1.flt</poTemplateFilePath>
+	        <remark>JPA PO 模板, 多个主键为外部类, 适用于遵循JPA规范的持久层框架, 如:Hibernate</remark>
+	    </poTemplate>
+	</poTemplates>
+</huiWanpengRoot>

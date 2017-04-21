@@ -1,0 +1,67 @@
+<#-- 生成package信息 -->
+<#if poModel.packageName??>package ${poModel.packageName};</#if>
+
+import java.io.Serializable;
+
+<#-- 生成import信息 -->
+<#list poModel.importPkClassSet as clazz>
+import ${clazz};
+</#list>
+
+import javax.persistence.Embeddable;
+import javax.persistence.Column;
+
+/**
+ * <#if poModel.tableComment??>${poModel.tableComment} </#if>[${poModel.tableName}] PK
+ * Generate by Xbatis Generator 
+ * Create time ${poModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+@Embeddable
+public class ${poModel.pkClassShort} implements Serializable
+{
+    <#-- 生成主键字段信息 -->
+    <#list poModel.poPkPropertyModelLst as poPropertyModel>
+    private ${poPropertyModel.javaTypeShort} ${poPropertyModel.property}; <#if poPropertyModel.columnComment??>// ${poPropertyModel.columnComment}<#if poPropertyModel.primaryKey>,主键</#if><#if !poPropertyModel.nullable>,不能为空</#if></#if>
+    </#list>
+  
+    <#-- 生成不带参数的构造方法 -->
+    /**
+     *不带参数构造方法
+     */
+    public ${poModel.pkClassShort}(){}
+  
+    <#-- 生成带参数的构造方法 -->
+    /**
+     *带参数构造方法
+     <#list poModel.poPkPropertyModelLst as poPropertyModel>
+     *@param ${poPropertyModel.property} <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment}</#if>
+    </#list>
+     */
+    public ${poModel.pkClassShort}(<#list poModel.poPkPropertyModelLst as poPropertyModel>${poPropertyModel.javaTypeShort} ${poPropertyModel.property}<#if poPropertyModel_has_next>, </#if></#list>){
+        <#list poModel.poPkPropertyModelLst as poPropertyModel>
+        this.${poPropertyModel.property} = ${poPropertyModel.property};
+        </#list>
+    }
+  
+    <#-- 生成主键字段的getter/setter方法 -->
+    <#list poModel.poPkPropertyModelLst as poPropertyModel>
+    /** 
+     *Getter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+     *@return
+     */
+    @Column(name="${poPropertyModel.column}")
+    public ${poPropertyModel.javaTypeShort} get${poPropertyModel.property?cap_first}(){
+        return this.${poPropertyModel.property};
+    }
+
+    /** 
+     *Setter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+     *@param ${poPropertyModel.property}
+     */
+    public void set${poPropertyModel.property?cap_first}(${poPropertyModel.javaTypeShort} ${poPropertyModel.property}){
+        this.${poPropertyModel.property} = ${poPropertyModel.property};
+    }
+  </#list>
+  
+    private static final long serialVersionUID = -3866273632690788142L;
+}

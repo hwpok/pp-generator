@@ -1,0 +1,89 @@
+﻿<#-- 生成package信息 -->
+<#if daoModel.daoInterfacePackageName??>package ${daoModel.daoInterfacePackageName};</#if>
+
+import java.util.List;
+import java.util.HashMap;
+
+
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+
+<#-- 生成import信息 -->
+<#list daoModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+
+/**
+ * <#if daoModel.tableComment??>${daoModel.tableComment}</#if>[${daoModel.tableName}]DOS
+ * Generate by Wanpeng.Hui Software 
+ * Create time ${daoModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+@Repository
+public interface ${daoModel.daoInterfaceShort}
+{
+    /**
+     * 新增加记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public int insert(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first});
+    
+    /**
+     * 以实体对象的主键作为条件,修改记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public int updateByPk(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first});
+    
+    /**
+     * 以HashMap作为条件参数,修改记录
+     * @param hashMap
+     * @return
+     */
+    public int updateByHashMap(HashMap<String,Object> hashMap);
+    
+    /**
+     * 仅以主键作为条件,删除记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public int deleteByPk(<#list daoModel.daoPkModelLst as daoPkModel>@Param("${daoPkModel.property}")${daoPkModel.javaTypeShort} ${daoPkModel.property}<#if daoPkModel_has_next>,</#if></#list>);
+    
+    
+    /**
+     * 以实体对象作为条件参数,删除记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public int deleteByObj(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first});
+    
+    /**
+     * 以实体对象作为条件参数,查找记录,返回对象
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public ${daoModel.poClassShort} findObjByPk(<#list daoModel.daoPkModelLst as daoPkModel>@Param("${daoPkModel.property}")${daoPkModel.javaTypeShort} ${daoPkModel.property}<#if daoPkModel_has_next>, </#if></#list>);
+    
+    /**
+     * 以实体对象作为条件参数,查找记录,返回对象集合
+     * @param ${daoModel.poClassShort?uncap_first}
+     * @return
+     */
+    public List<${daoModel.poClassShort}> queryLstByObj(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first});
+    
+    /**
+     * 根据HashMap分页面查询, 查询结果为集合
+     * @param hashMap
+     * @param rowBounds
+     */
+    public List<${daoModel.poClassShort}> queryPageByMap(HashMap<String, Object> hashMap, RowBounds rowBounds);
+    
+    /**
+     * 查询记录条数
+     * @param hashMap
+     */
+    public int queryCountByMap(HashMap<String, Object> hashMap);
+}

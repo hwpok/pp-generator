@@ -1,0 +1,160 @@
+<#-- 生成package信息 -->
+<#if poModel.packageName??>package ${poModel.packageName};</#if>
+
+import java.io.Serializable;
+
+<#-- 生成import信息 -->
+<#list poModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+<#-- 非复合主键和复合主键, 引入不同的类 -->
+<#if poModel.multiPrimaryKey>
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+<#else>
+import javax.persistence.Id;
+</#if>
+
+<#-- 必须引入的类 -->
+import javax.persistence.Column;
+import javax.persistence.Entity; 
+import javax.persistence.Table;
+
+/**
+ * <#if poModel.tableComment??>${poModel.tableComment} </#if>[${poModel.tableName}] POJO
+ * Generate by Xbatis Generator 
+ * Create time ${poModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+ @Entity
+ @Table(name="${poModel.tableName}")
+public class ${poModel.poClassShort} {
+  
+  <#-- 复合主键, 定义PK主键类字段,非复合主键,生成主键字段 -->
+  <#if poModel.multiPrimaryKey>
+    private PK pk; // 复合主键
+  <#else>
+    <#list poModel.poPkPropertyModelLst as poPropertyModel>
+    private ${poPropertyModel.javaTypeShort} ${poPropertyModel.property}; <#if poPropertyModel.columnComment??>// ${poPropertyModel.columnComment},主键,不能为空</#if>
+    </#list>
+  </#if>
+  <#-- 生成非主键字段信息 -->
+  <#list poModel.poCmPropertyModelLst as poPropertyModel>
+    private ${poPropertyModel.javaTypeShort} ${poPropertyModel.property}; <#if poPropertyModel.columnComment??>// ${poPropertyModel.columnComment}<#if !poPropertyModel.nullable>,不能为空</#if></#if>
+  </#list>
+  
+  <#-- 生成非复合主键的主键字段的setter/getter方法 -->
+  <#if !poModel.multiPrimaryKey>
+    <#list poModel.poPkPropertyModelLst as poPropertyModel>
+    /** 
+     *Getter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+     *@return
+     */
+    @Id
+    @Column(name="${poPropertyModel.column}")
+    public ${poPropertyModel.javaTypeShort} get${poPropertyModel.property?cap_first}(){
+      return this.${poPropertyModel.property};
+    }
+    
+    /** 
+     *Setter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+     *@param ${poPropertyModel.property}
+     */
+    public void set${poPropertyModel.property?cap_first}(${poPropertyModel.javaTypeShort} ${poPropertyModel.property}){
+      this.${poPropertyModel.property} = ${poPropertyModel.property};
+    }
+    </#list>
+  <#else>
+    /** 
+     *Getter 主键,不能为空
+     *@return
+     */
+    @EmbeddedId
+    public ${poModel.poClassShort}.PK getPk(){
+        return pk;
+    }
+    
+    /** 
+     *Setter 主键,不能为空
+     *@param pk
+     */
+    public void setPk(${poModel.poClassShort}.PK pk){
+        this.pk =pk;
+    }
+  
+  </#if>
+
+  <#-- 生成非主键字段的set/get方法 -->
+  <#list poModel.poCmPropertyModelLst as poPropertyModel>
+    /** 
+     *Getter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment}</#if><#if !poPropertyModel.nullable>,不能为空</#if>
+     *@return
+     */
+    @Column(name="${poPropertyModel.column}")
+    public ${poPropertyModel.javaTypeShort} get${poPropertyModel.property?cap_first}(){
+      return this.${poPropertyModel.property};
+    }
+    
+    /** 
+     *Setter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment}</#if><#if !poPropertyModel.nullable>,不能为空</#if>
+     *@param ${poPropertyModel.property}
+     */
+    public void set${poPropertyModel.property?cap_first}(${poPropertyModel.javaTypeShort} ${poPropertyModel.property}){
+      this.${poPropertyModel.property} = ${poPropertyModel.property};
+    }
+  </#list> 
+  
+  <#-- 复合主键, 生成PK类 -->
+  <#if poModel.multiPrimaryKey>
+    @Embeddable
+    public static class PK implements Serializable
+    {
+      <#-- 生成主键字段信息 -->
+      <#list poModel.poPkPropertyModelLst as poPropertyModel>
+        private ${poPropertyModel.javaTypeShort} ${poPropertyModel.property}; <#if poPropertyModel.columnComment??>// ${poPropertyModel.columnComment}<#if poPropertyModel.primaryKey>,主键</#if><#if !poPropertyModel.nullable>,不能为空</#if></#if>
+      </#list>
+      
+      <#-- 生成不带参数的构造方法 -->
+      /*
+       *不带参数构造方法
+       */
+      public PK(){}
+      
+      <#-- 生成带参数的构造方法 -->
+      /*
+       *带参数构造方法
+       <#list poModel.poPkPropertyModelLst as poPropertyModel>
+       *@param ${poPropertyModel.property} <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment}</#if>
+        </#list>
+       */
+      public PK(<#list poModel.poPkPropertyModelLst as poPropertyModel>${poPropertyModel.javaTypeShort} ${poPropertyModel.property}<#if poPropertyModel_has_next>, </#if></#list>){
+        <#list poModel.poPkPropertyModelLst as poPropertyModel>
+          this.${poPropertyModel.property} = ${poPropertyModel.property};
+        </#list>
+      }
+      
+      <#-- 生成主键字段的getter/setter方法 -->
+      <#list poModel.poPkPropertyModelLst as poPropertyModel>
+        /** 
+         *Getter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+         *@return
+         */
+        @Column(name="${poPropertyModel.column}")
+        public ${poPropertyModel.javaTypeShort} get${poPropertyModel.property?cap_first}(){
+          return this.${poPropertyModel.property};
+        }
+    
+        /** 
+         *Setter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if>主键,不能为空
+         *@param ${poPropertyModel.property}
+         */
+        public void set${poPropertyModel.property?cap_first}(${poPropertyModel.javaTypeShort} ${poPropertyModel.property}){
+          this.${poPropertyModel.property} = ${poPropertyModel.property};
+        }
+      </#list>
+      
+      private static final long serialVersionUID = -3866273632690788142L;
+    }
+  </#if>
+  
+}

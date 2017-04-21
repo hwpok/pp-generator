@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="dbConfigParser">
+	<database id="DB_POSTGRESQL_01" enable="true">
+	
+	    <!-- 数据库名称, 配置文件相对路径, 说明备注 -->
+		<name>PostgreSQL 9.1+</name>
+	    <configFilePath>config/databases/db_config_postgresql_91.xml</configFilePath>
+		<remark>PostgreSQL  数据库 Version 9.1 以上</remark>
+
+		<!-- 数据类型, 数据库驱动, 数据连接样例 -->
+		<dbType>postgressql</dbType>
+		<driver>org.postgresql.Driver</driver>
+		<connectUrlExample>jdbc:postgresql://127.0.0.1:5432/hwptestdb</connectUrlExample>
+
+		<sqls>
+			<!-- 通过表名查找表信息 -->
+			<selectTableSql>
+				<mainSql>
+                    SELECT
+                        tablename,
+                        obj_description(relfilenode,'pg_class')
+                    FROM pg_tables a, pg_class b
+                    WHERE a.tablename = b.relname
+                      AND a.tablename NOT LIKE   'pg%'
+                      AND a.tablename NOT LIKE 'sql_%'
+				</mainSql>
+				<conditionEqual>
+				    AND a.tablename='?'
+				    ORDER BY a.tablename
+				</conditionEqual>
+				<conditionLike>
+					AND a.tablename LIKE '%?%'
+					ORDER BY a.tablename
+				</conditionLike>
+			</selectTableSql>
+
+			<!-- 通过表名查找指定表的所有列信息 -->
+			<selectColumnSql>
+                SELECT 
+                    x.column_name,
+                    x.comment,
+                    z.typename,
+                    x.data_length,
+                    x.numeric_precision,
+                    x.numeric_scale,
+                    y.pk,
+                    x.nullable 
+                FROM (
+                       SELECT
+                           a1.table_name,
+                           a1.column_name AS column_name,
+                           a2.description AS comment,
+                           a1.data_type AS data_type,
+                           a1.character_maximum_length AS data_length,
+                           a1.numeric_precision AS numeric_precision,
+                           a1.numeric_scale AS numeric_scale,
+                           a1.is_nullable AS nullable,
+                           a1.ordinal_position
+                       FROM information_schema.columns a1 LEFT JOIN pg_description a2 ON (a1.table_name::regclass = a2.objoid AND a1.ordinal_position = a2.objsubid)
+                       WHERE a1.table_name='?'
+                      ) AS x LEFT JOIN (
+                       SELECT 
+                           b3.attname AS column_name,
+                           UPPER(b1.contype) AS pk
+                       FROM pg_constraint b1 INNER JOIN pg_class b2 ON b1.conrelid = b2.oid 
+                            INNER JOIN pg_attribute b3 ON (b3.attrelid = b2.oid  AND  b3.attnum =  ANY(b1.conkey))
+                            INNER JOIN pg_type b4 ON b4.oid = b3.atttypid
+                       WHERE b2.relname = '?' 
+                          AND b1.contype='p' 
+                      ) y ON x.column_name=y.column_name LEFT JOIN (
+                       SELECT 
+	                       c1.attname as name,
+	                       c3.typname as typename
+	                   FROM pg_attribute as c1 ,pg_class as c2,  pg_type c3
+	                   WHERE c2.relname = '?' 
+	                      AND c1.attrelid = c2.oid 
+	                      AND c3.oid=c1.atttypid AND c1.attnum>0
+	                  ) z ON x.column_name=z.name
+                       ORDER BY x.ordinal_position
+			</selectColumnSql>
+			<!-- 数据库分页SQL, -->
+			<pageSql>
+			    <startPageSql></startPageSql>
+			    <endPageSql>LIMIT @pageSize@ OFFSET @offsetIndex@</endPageSql>
+			</pageSql>
+		</sqls>
+
+		<!-- 字段值映射 -->
+		<columnValueMapping>
+			<!-- column_key的值为p时,表示该字段为主键 -->
+			<primaryKeyToBoolean>P</primaryKeyToBoolean>
+			<!-- is_nullable的值为YES,表可该字段允许为空 -->
+			<nullableToBoolean>YES</nullableToBoolean>
+		</columnValueMapping>
+
+		<!-- 字段类型映射 -->
+		<columnTypeMapping>
+
+			<!-- 字符型 -->
+			<columnType name="BPCHAR">
+				<jdbcType>CHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			<columnType name="VARCHAR|TEXT"  globalDefault="true">
+				<jdbcType>VARCHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			<columnType name="VARCHAR|TEXT"  globalDefault="true">
+				<jdbcType>VARCHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			
+			<!-- 整型 -->
+			<columnType name="INT2">
+				<jdbcType>SMALLINT</jdbcType>
+				<javaType>short</javaType>
+				<javaTypeWrapped>java.lang.Short</javaTypeWrapped>
+			</columnType>
+			<columnType name="INT4">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+			<columnType name="INT8">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMERIC" numericPrecisionMin="1" numericPrecisionMax="9">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+            <columnType name="NUMERIC" numericPrecisionMin="10" numericPrecisionMax="18">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			
+			<!-- 非整型 -->
+			<columnType name="FLOAT4">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMERIC" typeDefault="true">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			<columnType name="NUMERIC" numericPrecisionMin="1" numericPrecisionMax="10" numericScaleMin="1" numericScaleMax="4">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMERIC" numericPrecisionMin="1" numericPrecisionMax="31" numericScaleMin="1" numericScaleMax="16">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			
+			<!-- 布尔型 -->
+			<columnType name="BOOL">
+				<jdbcType>BOOL</jdbcType>
+				<javaType>boolean</javaType>
+				<javaTypeWrapped>java.math.BigDecimal</javaTypeWrapped>
+			</columnType>
+			
+			<!-- 日期时间型 -->
+			<columnType name="DATE">
+				<jdbcType>DATE</jdbcType>
+				<javaType>java.sql.Date</javaType>
+			</columnType>
+			<columnType name="TIME">
+				<jdbcType>TIME</jdbcType>
+				<javaType>java.sql.Time</javaType>
+			</columnType>
+			<columnType name="INTERVAL">
+				<jdbcType>DATETIME</jdbcType>
+				<javaType>java.util.Date</javaType>
+			</columnType>
+			<columnType name="TIMESTAMP">
+				<jdbcType>TIMESTAMP</jdbcType>
+				<javaType>java.sql.Timestamp</javaType>
+			</columnType>
+			
+			
+		</columnTypeMapping>
+		
+	</database>
+</huiWanpengRoot>

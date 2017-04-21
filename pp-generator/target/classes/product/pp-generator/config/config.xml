@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="globalConfigParser">
+    <!-- 
+     |  UI界面保存参数文件配置
+     |  UI界面的参数将保存在以下XML文件中 -->
+    
+    <uiConfig>
+        <uiParamFilePath>config/userinterfaces/ui_prarameters.xml</uiParamFilePath>
+    </uiConfig>
+    
+    
+    
+    <!--
+     |  数据库信息配置
+     |  /config/databases里的数据库配置文件的name|configFilePath|remark信息也可以在这里配置
+     |  这里配置后, config/batabases里的配置将不会生效
+     |  在这里配置的好处是方便统一管理
+     |    1.统一管理, 
+	 |    2.可预定模板在UI界面下拉框中的排列顺序
+     
+	<databasesConfig>
+		<database id="DB_ORACLE_01" enable="true">
+		    <name>ORACLE 9+</name>
+			<configFilePath>config/databases/db_config_oracle_9.xml</configFilePath>
+			<remark>ORACLE 数据库 Version 9.0 以上</remark>
+		</database>
+		<database id="DB_MYSQL_01" enable="true">
+		    <name>My SQL 5+</name>
+			<configFilePath>config/databases/db_config_mysql_5.xml</configFilePath>
+			<remark>My SQL  数据库 Version 5.0 以上</remark>
+		</database>
+		<database id="DB_DB2_01" enable="true">
+		    <name>DB2 9.1+</name>
+			<configFilePath>config/databases/db_config_db2_91.xml</configFilePath>
+			<remark>DB2  数据库 Version 9.1 以上</remark>
+		</database>
+		<database id="DB_POSTGRESQL_01" enable="true">
+		    <name>PostgreSQL 9.1+</name>
+			<configFilePath>config/databases/db_config_postgresql_91.xml</configFilePath>
+			<remark>PostgreSQL  数据库 Version 9.1 以上</remark>
+		</database>
+	</databasesConfig>
+	-->
+	 
+	 
+	 
+	<!--
+	 |  模板文件配置
+	 |  /config/templates里的描述文件信息也可以在这里配置
+	 |  在这里配置后, 对应的描述文件配置将不在生效
+	 |  在这里配置的好处是:
+	 |    1.统一管理, 
+	 |    2.可预定模板在UI界面下拉框中的排列顺序
+	 |
+	<poTemplates>
+	    <poTemplate id="PT_COMM_01" enable="true">
+	        <name>通用 PO 模板</name>
+	        <poTemplateFilePath>config/templates/po_comm/po_comm.flt</poTemplateFilePath>
+	        <remark>通用PO模板</remark>
+	    </poTemplate>
+	    <poTemplate id="PT_JPA_02" enable="true">
+	        <name>通用 JPA PO 模板</name>
+	        <poTemplateFilePath>config/templates/po_jpa/po_jpa.flt</poTemplateFilePath>
+	        <remark>JPA通用模板, 适用于遵循JPA规范的持久层框架, 如:Hibernate</remark>
+	    </poTemplate>
+	</poTemplates>
+	
+	
+	<daoMappingTemplates>
+	    <daoMappingTemplate id="IT01" type="ibatis" enable="true">
+	        <name>通用 ibatis SQL 分页 DAO 模板</name>
+	        <daoTemplateFilePath>config/templates/ibatis_comm/ibatis_comm_dao.flt</daoTemplateFilePath>
+	        <mappingTemplateFilePath>config/templates/ibatis_comm/ibatis_comm_mapping.flt</mappingTemplateFilePath>
+	        <remark>通用ibatis模板, SQL分页</remark>
+	    </daoMappingTemplate>
+	    
+	    <daoMappingTemplate id="IT02" type="ibatis" enable="true">
+	        <name>建设银行金融市场 ibatis DOS 模板</name>
+	        <daoTemplateFilePath>config/templates/ibatis_ccbjrsc/ibatis_ccbjrsc_dao.flt</daoTemplateFilePath>
+	        <mappingTemplateFilePath>config/templates/ibatis_ccbjrsc/ibatis_ccbjrsc_mapping.flt</mappingTemplateFilePath>
+	        <remark>中国建设银行上海开发中心 ibatis DOS 模板</remark>
+	    </daoMappingTemplate>
+	    
+	    <daoMappingTemplate id="MT01" type="mybatis" enable="true">
+	        <name>通用 Mybatis SQL 分页 DAO 模板</name>
+	        <daoTemplateFilePath>config/templates/mybatis_comm/mybatis_comm_dao.flt</daoTemplateFilePath>
+	        <mappingTemplateFilePath>config/templates/mybatis_comm/mybatis_comm_mapping.flt</mappingTemplateFilePath>
+	        <remark>模通用Mybatis模板, SQL分页面</remark>
+	    </daoMappingTemplate>
+	    
+	    <daoMappingTemplate id="MT02" type="mybatis" enable="true">
+	        <name>通用 Mybatis 插件分页 DAO 模板</name>
+	        <daoTemplateFilePath>config/templates/mybatis_rowbounds/mybatis_rowbounds_dao.flt</daoTemplateFilePath>
+	        <mappingTemplateFilePath>config/templates/mybatis_rowbounds/mybatis_rowbounds_mapping.flt</mappingTemplateFilePath>
+	        <remark>模通用Mybatis模板, 插件分页</remark>
+	    </daoMappingTemplate>
+	</daoMappingTemplates>
+	 -->
+	 
+	 
+</huiWanpengRoot>

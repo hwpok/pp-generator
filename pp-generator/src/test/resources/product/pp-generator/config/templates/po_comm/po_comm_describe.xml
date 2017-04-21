@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<poTemplates>
+	    <poTemplate id="PT_COMM_01" enable="true">
+	        <name>ibatis/MyBatis通用PO模板</name>
+	        <poTemplateFilePath>config/templates/po_comm/po_comm.flt</poTemplateFilePath>
+	        <remark>不对复合主键作任何处理, 适合于ibatis, MyBatis框架</remark>
+	    </poTemplate>
+	</poTemplates>
+</huiWanpengRoot>

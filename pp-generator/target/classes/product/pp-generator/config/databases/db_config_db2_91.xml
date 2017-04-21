@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="dbConfigParser">
+	<database id="DB_DB2_01" enable="true">
+	
+	    <!-- 数据库名称, 配置文件相对路径, 说明备注 -->
+	    <name>DB2 9.1+</name>
+	    <configFilePath>config/databases/db_config_db2_91.xml</configFilePath>
+	    <remark>DB2  数据库 Version 9.1 以上</remark>
+	    
+	    <!-- 数据类型, 数据库驱动, 数据连接样例 -->
+		<dbType>db2</dbType>
+		<driver>com.ibm.db2.jcc.DB2Driver</driver>
+		<connectUrlExample>jdbc:db2://192.168.1.80:50000/CENTER</connectUrlExample>
+
+		<sqls>
+			<!-- 通过表名查找表信息 -->
+			<selectTableSql>
+				<mainSql>
+                    SELECT  
+                        name table_name, 
+                        remarks comment 
+                    FROM sysibm.systables 
+                    WHERE type='T' 
+				</mainSql>
+				<conditionEqual>
+				    AND name=upper('?')
+				</conditionEqual>
+				<conditionLike>
+					AND name LIKE '%?%'
+				</conditionLike>
+			</selectTableSql>
+
+			<!-- 通过表名查找指定表的所有列信息 -->
+			<selectColumnSql>
+                SELECT 
+                    a1.colname, 
+                    a1.remarks,
+                    a1.typename,
+                    a1.length data_length,
+                    a1.length num,
+                    a1.scale,
+                    a2.pk,
+                    a1.nulls
+                FROM syscat.columns a1 
+                     LEFT JOIN (
+                                 SELECT 
+                                     b2.colname colname,
+                                     'P' pk 
+                                 FROM syscat.tabconst b1 ,syscat.keycoluse b2 
+                                 WHERE b1.constname = b2.constname
+                                   AND b1.type='P' 
+                                   AND b1.tabname=upper('?')
+                                ) a2 ON a1.colname=a2.colname
+                WHERE a1.tabname=upper('?')
+                   ORDER BY a1.colno asc
+			</selectColumnSql>
+			
+			<!-- 数据库分页SQL, -->
+			<pageSql>
+			    <startPageSql>SELECT * FROM (SELECT b.*, ROWNUMBER() OVER() AS rn FROM (</startPageSql>
+			    <endPageSql>) AS b) AS a WHERE a.rn <![CDATA[>]]> @offsetIndex@ AND a.rn <![CDATA[<=]]> @offsetIndex@ + @pageSize@)</endPageSql>
+		    </pageSql>
+		</sqls>
+
+		<!-- 字段值映射 -->
+		<columnValueMapping>
+			<!-- column_key的值为PRI时,表示该字段为主键 -->
+			<primaryKeyToBoolean>P</primaryKeyToBoolean>
+			<!-- is_nullable的值为YES,表可该字段允许为空 -->
+			<nullableToBoolean>Y</nullableToBoolean>
+		</columnValueMapping>
+
+		<!-- 字段类型映射 -->
+		<columnTypeMapping>
+
+			<!-- 字符型 -->
+			<columnType name="CHARACTER">
+				<jdbcType>CHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			<columnType name="VARCHAR|LONG VARCHAR">
+				<jdbcType>VARCHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			
+			
+			<!-- 整型 -->
+			<columnType name="SMALLINT">
+				<jdbcType>SMALLINT</jdbcType>
+				<javaType>short</javaType>
+				<javaTypeWrapped>java.lang.Short</javaTypeWrapped>
+			</columnType>
+			<columnType name="INTEGER">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+			<columnType name="BIGINT">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL" numericPrecisionMin="1" numericPrecisionMax="9">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+            <columnType name="DECIMAL" numericPrecisionMin="10" numericPrecisionMax="18">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			
+			<!-- 非整型 -->
+			<columnType name="DOUBLE">
+				<jdbcType>DOUBLE</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.DOUBLE</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.math.BigDecimal</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL" numericPrecisionMin="1" numericPrecisionMax="10" numericScaleMin="1" numericScaleMax="4">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL" numericPrecisionMin="1" numericPrecisionMax="31" numericScaleMin="1" numericScaleMax="16">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			
+			<!-- 日期时间型 -->
+			<columnType name="DATE">
+				<jdbcType>DATE</jdbcType>
+				<javaType>java.sql.Date</javaType>
+			</columnType>
+			<columnType name="TIME">
+				<jdbcType>TIME</jdbcType>
+				<javaType>java.sql.Time</javaType>
+			</columnType>
+			<columnType name="TIMESTAMP">
+				<jdbcType>TIMESTAMP</jdbcType>
+				<javaType>java.sql.Timestamp</javaType>
+			</columnType>
+			
+			<!-- 大对象 -->
+			<columnType name="CLOB">
+				<jdbcType>CLOB</jdbcType>
+				<javaType>java.lang.String</javaType>
+				<typeHandler>com.ibatis.sqlmap.engine.type.ClobTypeHandlerCallback</typeHandler>
+			</columnType>
+		
+		</columnTypeMapping>
+		
+	</database>
+</huiWanpengRoot>

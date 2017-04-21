@@ -1,0 +1,20 @@
+﻿<#-- 生成package信息 -->
+<#if daoModel.daoInterfacePackageName??>package ${daoModel.daoInterfacePackageName};</#if>
+
+import java.util.List;
+import java.util.HashMap;
+
+<#-- 生成import信息 -->
+<#list daoModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+
+/**
+ * <#if daoModel.tableComment??>${daoModel.tableComment}</#if>[${daoModel.tableName}]DOS
+ * Generate by Wanpeng.Hui Software 
+ * Create time ${daoModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+public interface ${daoModel.daoInterfaceShort} {
+    
+}

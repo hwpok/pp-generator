@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<daoMappingTemplates>
+	    <daoMappingTemplate id="IT02" type="ibatis" enable="true">
+	        <name>建设银行金融市场 ibatis DOS 模板</name>
+	        <daoClassTemplateFilePath>config/templates/ibatis_ccbjrsc/ibatis_ccbjrsc_dao.flt</daoClassTemplateFilePath>
+	        <daoMappingTemplateFilePath>config/templates/ibatis_ccbjrsc/ibatis_ccbjrsc_mapping.flt</daoMappingTemplateFilePath>
+	        <remark>中国建设银行上海开发中心 ibatis DOS 模板</remark>
+	    </daoMappingTemplate>
+	</daoMappingTemplates>
+</huiWanpengRoot>

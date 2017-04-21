@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<daoMappingTemplates>
+	    <daoMappingTemplate id="IT01" type="ibatis" enable="true">
+	        <name>通用 ibatis SQL 分页 DAO 模板</name>
+	        <daoClassTemplateFilePath>config/templates/ibatis_comm/ibatis_comm_dao.flt</daoClassTemplateFilePath>
+	        <daoMappingTemplateFilePath>config/templates/ibatis_comm/ibatis_comm_mapping.flt</daoMappingTemplateFilePath>
+	        <remark>通用ibatis模板, SQL分页</remark>
+	    </daoMappingTemplate>
+	</daoMappingTemplates>
+</huiWanpengRoot>

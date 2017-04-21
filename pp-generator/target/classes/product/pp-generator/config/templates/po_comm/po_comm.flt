@@ -1,0 +1,40 @@
+<#-- 生成package信息 -->
+<#if poModel.packageName??>package ${poModel.packageName};</#if>
+
+<#-- 生成import信息 -->
+<#list poModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+/**
+ * <#if poModel.tableComment??>${poModel.tableComment} </#if>[${poModel.tableName}] POJO
+ * Generate by Xbatis Generator 
+ * Create time ${poModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+public class ${poModel.poClassShort} {
+
+  <#-- 生成主键字段信息 -->
+  <#list poModel.poPropertyModelLst as poPropertyModel>
+    private ${poPropertyModel.javaTypeShort} ${poPropertyModel.property}; <#if poPropertyModel.columnComment??>// ${poPropertyModel.columnComment}<#if poPropertyModel.primaryKey>,主键</#if><#if !poPropertyModel.nullable>,不能为空</#if></#if>
+  </#list>
+  
+  <#-- 生成主键set/get方法 -->
+  <#list poModel.poPropertyModelLst as poPropertyModel>
+    /** 
+     *Getter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if><#if poPropertyModel.primaryKey>主键</#if><#if !poPropertyModel.nullable>,不能为空</#if>
+     *@return
+     */
+    public ${poPropertyModel.javaTypeShort} get${poPropertyModel.property?cap_first}(){
+      return this.${poPropertyModel.property};
+    }
+    
+    /** 
+     *Setter <#if poPropertyModel.columnComment??>${poPropertyModel.columnComment},</#if><#if poPropertyModel.primaryKey>主键</#if><#if !poPropertyModel.nullable>,不能为空</#if>
+     *@param ${poPropertyModel.property}
+     */
+    public void set${poPropertyModel.property?cap_first}(${poPropertyModel.javaTypeShort} ${poPropertyModel.property}){
+      this.${poPropertyModel.property} = ${poPropertyModel.property};
+    }
+    
+  </#list>
+}

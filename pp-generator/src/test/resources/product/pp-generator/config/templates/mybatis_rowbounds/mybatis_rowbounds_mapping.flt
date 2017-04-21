@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="${mappingModel.namespace}">
+   
+    <!-- ${mappingModel.tableName} 表所有列的映射 -->
+    <resultMap id="allColumnsResultMap" type="${mappingModel.poClass}">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <#if mappingColumnModel.columnComment??><!-- ${mappingColumnModel.columnComment} -->  </#if><<#if mappingColumnModel.primaryKey>id<#else>result</#if> column="${mappingColumnModel.column}" property="${mappingColumnModel.property}" <#if mappingColumnModel.typeHandler??> typeHandler="${mappingColumnModel.typeHandler}</#if>/>
+      </#list>
+    </resultMap>
+    
+     <!-- 
+          ################ Xbatis Generator 生成, 公共SQL开始,这些SQL仅用于构成操作表的SQL,以简化配置 ##################   
+     -->
+    
+    <!-- ${mappingModel.tableName} 表所有列 -->
+    <sql id="pubSelect">
+      SELECT 
+        <#list mappingModel.mappingColumnModelLst as mappingColumnModel>${mappingColumnModel.column}<#if mappingColumnModel_has_next>,</#if></#list>
+      FROM ${mappingModel.tableName} 
+    </sql>
+    
+    <!-- 插入sql -->
+    <sql id="pubInsert">  
+        INSERT INTO ${mappingModel.tableName} 
+          <trim prefix="(" suffixOverrides=",">
+          <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+             <if test="${mappingColumnModel.property} != null">${mappingColumnModel.column},</if>
+          </#list>
+          </trim>
+          ) VALUES
+          <trim prefix="(" suffixOverrides=",">
+           <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+             <if test="${mappingColumnModel.property} != null">${r"#{"}${mappingColumnModel.property}},</if>
+          </#list>
+         </trim>
+         )
+    </sql>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录基础SQL,不能包含主键 -->
+    <sql id="pubUpdateColumns">
+       UPDATE ${mappingModel.tableName} 
+         <set>
+         <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+           <#if !mappingColumnModel.primaryKey>
+             <if test="${mappingColumnModel.property} != null">${mappingColumnModel.column} = ${r"#{"}${mappingColumnModel.property}},</if>
+           <#else>
+           <#t>
+           </#if>
+         </#list>
+         </set>
+    </sql>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录基础SQL -->
+    <sql id="pubDelete">
+        DELETE FROM ${mappingModel.tableName}
+    </sql>
+    
+    <!-- ${mappingModel.tableName} 表主键 WHERE 条件 -->
+    <sql id="pubPkColumnsWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+          <#if mappingColumnModel.primaryKey>
+        AND ${mappingColumnModel.column} = ${r"#{"}${mappingColumnModel.property}}
+          </#if>
+      </#list>
+    </sql>
+  
+    <!-- ${mappingModel.tableName} 表所有列 WHERE 条件 -->
+    <sql id="pubAllColumnsWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <if test="${mappingColumnModel.property} != null"> AND ${mappingColumnModel.column} = ${r"#{"}${mappingColumnModel.property}} </if>
+      </#list>
+    </sql>
+    
+    <!-- ${mappingModel.tableName} 表所有列 WHERE 条件, 加Cdn后缀作为HashMap键值,一般仅用于Update语名 -->
+    <sql id="pubAllColumnsUpdateWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <if test="${mappingColumnModel.property}Cdn != null"> AND ${mappingColumnModel.column} = ${r"#{"}${mappingColumnModel.property}Cdn} </if>
+      </#list>
+    </sql>
+    
+    <!-- 
+        ######################## Xbatis Generator 生成, 以下是对表进行增,查,改,删 ########################  
+     -->
+    
+    <!-- 向 ${mappingModel.tableName} 表新增记录 -->
+    <insert id="insert" parameterType="${mappingModel.poClass}">  
+        <include refid="pubInsert"/>
+    </insert>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录, 传入参数是一个对象 -->
+    <update id="updateByPk" parameterType="${mappingModel.poClass}">
+       <include refid="pubUpdateColumns"/>
+       <where>
+       	   <include refid="pubPkColumnsWhere"/>
+       </where>
+    </update>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录, 传入参数是一个java.util.HashMap, HashMap的条件值加Cdn后缀以区别Update Set的属性 -->
+    <update id="updateByHashMap" parameterType="java.util.HashMap">
+       <include refid="pubUpdateColumns"/>
+       <where>
+           <include refid="pubAllColumnsUpdateWhere"/>
+       </where>
+    </update>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录, 传入参数是一个对象 -->
+    <delete id="deleteByPk">
+       <include refid="pubDelete"/>
+       <where>
+       	   <include refid="pubPkColumnsWhere"/>
+       </where>
+    </delete>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录, 传入参数是一个java.util.HashMap -->
+    <delete id="deleteByObj" parameterType="${mappingModel.poClass}">
+       <include refid="pubDelete"/>
+       <where>
+       	   <include refid="pubAllColumnsWhere"/>
+       </where>
+    </delete>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是HashMap, 返回一个Object -->
+    <select  id="findObjByPk" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<where>
+       	   <include refid="pubPkColumnsWhere"/>
+       	</where>
+    </select>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是Object, 返回一个集合 -->
+    <select  id="queryLstByObj" parameterType="${mappingModel.poClass}" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<where>
+       	   <include refid="pubAllColumnsWhere"/>
+       	</where>
+    </select>
+    
+    <!-- 查符合条件的记录数 -->
+    <select  id="queryCountByMap" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+       	SELECT COUNT(1) FROM ${mappingModel.tableName}
+       	<where>
+       	   <include refid="pubAllColumnsWhere"/>
+       	</where>
+    </select>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是Object, 返回一个集合 -->
+    <select  id="queryPageByMap" parameterType="java.util.HashMap" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<where>
+       	   <include refid="pubAllColumnsWhere"/>
+       	</where>
+    </select>
+    
+    <!-- 
+        ########################################## 以下放置您的代码 ##########################################  
+     -->
+    
+</mapper>  

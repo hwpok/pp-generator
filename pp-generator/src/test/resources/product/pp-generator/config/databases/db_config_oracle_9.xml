@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="dbConfigParser">
+	<database id="DB_ORACLE_01" enable="true">
+	
+	    <!-- 数据库名称, 配置文件相对路径, 说明备注 -->
+		<name>ORACLE 9+</name>
+	    <configFilePath>config/databases/db_config_oracle_9.xml</configFilePath>
+	    <remark>ORACLE 数据库 Version 9.0 以上</remark>
+
+		<!-- 数据类型, 数据库驱动, 数据连接样例 -->
+		<dbType>oracle</dbType>
+		<driver>oracle.jdbc.driver.OracleDriver</driver>
+		<connectUrlExample>jdbc:oracle:thin:@192.168.1.80:1521:ORCL</connectUrlExample>
+
+		<sqls>
+			<!-- 通过表名查找表信息 -->
+			<selectTableSql>
+				<mainSql>
+					SELECT
+					  table_name,
+					  comments
+					FROM user_tab_comments
+					WHERE table_type='TABLE'
+				</mainSql>
+				<conditionEqual>
+				    AND table_name='?'
+				</conditionEqual>
+				<conditionLike>
+					AND table_name LIKE '%?%'
+				</conditionLike>
+			</selectTableSql>
+
+			<!-- 通过表名查找指定表的所有列信息 -->
+			<selectColumnSql>
+                SELECT a.column_name,
+                    b.comments,
+                    a.data_type,
+                    a.data_length,
+                    a.data_precision,
+                    a.data_scale,
+                    c.constraint_type,
+                    a.nullable
+                FROM user_tab_columns a
+                    LEFT JOIN user_col_comments b ON (a.column_name = b.column_name  AND a.table_name = b.table_name)
+                    LEFT JOIN  (SELECT 
+                                    ia.table_name,
+                                    ia.column_name, 
+                                    ib.constraint_type
+                                FROM user_cons_columns ia JOIN user_constraints ib ON(ia.table_name=ib.table_name AND ia.constraint_name=ib.constraint_name)
+                                WHERE ib.constraint_type='P'
+                                ) c ON (b.table_name=c.table_name AND b.column_name=c.column_name)
+                WHERE a.table_name='?'
+                ORDER BY column_id asc
+			</selectColumnSql>
+			
+			<!-- 数据库分页SQL, -->
+			<pageSql>
+			    <startPageSql>SELECT * FROM (SELECT t.*, rownum rn FROM (</startPageSql>
+			    <endPageSql>) t WHERE rownum <![CDATA[<=]]> @offsetIndex@ WHERE rn <![CDATA[>]]> @offsetIndex@ + @pageSize@</endPageSql>
+			</pageSql>
+		</sqls>
+
+		<!-- 字段值映射 -->
+		<columnValueMapping>
+			<!-- column_key的值为P时,表示该字段为主键 -->
+			<primaryKeyToBoolean>P</primaryKeyToBoolean>
+			<!-- is_nullable的值为Y时,表可该字段允许为空 -->
+			<nullableToBoolean>Y</nullableToBoolean>
+		</columnValueMapping>
+
+		<!-- 字段类型映射 -->
+		<columnTypeMapping>
+			
+			<!-- 字符型 -->
+			<columnType name="CHAR|NCHAR">
+				<jdbcType>CHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			<columnType name="VARCHAR2|NVARCHAR2" globalDefault="true">
+				<jdbcType>VARCHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			
+			
+			<!-- 数值型-整型 -->
+			<columnType name="INTEGER">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMBER|DECIMAL" numericPrecisionMin="1" numericPrecisionMax="9">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+            <columnType name="NUMBER|DECIMAL" numericPrecisionMin="10" numericPrecisionMax="18">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			
+			<!-- 数据型-非整型 -->
+			<columnType name="FLOAT">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMBER" typeDefault="true">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			<columnType name="DECIMAL" typeDefault="true">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			<columnType name="NUMBER|DECIMAL" numericPrecisionMin="1" numericPrecisionMax="10" numericScaleMin="1" numericScaleMax="4">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="NUMBER|DECIMAL" numericPrecisionMin="1" numericPrecisionMax="31" numericScaleMin="1" numericScaleMax="16">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			<columnType name="REAL" >
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+			
+			<!-- 日期时间型 -->
+			<columnType name="DATE">
+				<jdbcType>DATE</jdbcType>
+				<javaType>java.util.Date</javaType>
+			</columnType>
+			<columnType name="TIMESTAMP(0)|TIMESTAMP(1)|TIMESTAMP(2)|TIMESTAMP(3)|TIMESTAMP(4)|TIMESTAMP(5)|TIMESTAMP(6)|TIMESTAMP(7)|TIMESTAMP(8)|TIMESTAMP(9)">
+				<jdbcType>TIMESTAMP</jdbcType>
+				<javaType>java.sql.Timestamp</javaType>
+			</columnType>
+			
+			
+			<!-- 大对象 -->
+			<columnType name="CLOB">
+				<jdbcType>CLOB</jdbcType>
+				<javaType>java.lang.String</javaType>
+				<typeHandler>com.ibatis.sqlmap.engine.type.ClobTypeHandlerCallback</typeHandler>
+			</columnType>
+			
+		</columnTypeMapping>
+		
+	</database>
+</huiWanpengRoot>

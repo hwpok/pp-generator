@@ -1,0 +1,26 @@
+﻿<#-- 生成package信息 -->
+<#if daoModel.daoClassPackageName??>package ${daoModel.daoClassPackageName};</#if>
+
+import java.util.List;
+import java.util.HashMap;
+
+import org.springframework.stereotype.Repository;
+<#if daoModel.daoInterface??>
+import ${daoModel.daoInterface};
+</#if>
+
+<#-- 生成import信息 -->
+<#list daoModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+
+/**
+ * <#if daoModel.tableComment??>${daoModel.tableComment}</#if>[${daoModel.tableName}]DOS
+ * Generate by Wanpeng.Hui Software 
+ * Create time ${daoModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+@Repository
+public class ${daoModel.daoClassShort}<#if daoModel.daoInterfaceShort??> implements ${daoModel.daoInterfaceShort}</#if> {
+    
+}

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"   
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">  
+  
+<sqlMap namespace="${mappingModel.namespace}">
+
+    <!-- PO别名 -->
+    <typeAlias alias="${mappingModel.poClassShort}"  type="${mappingModel.poClass}"/>
+   
+    <!-- ${mappingModel.tableName} 表所有列的映射 -->
+    <resultMap id="allColumnsResultMap" class="${mappingModel.poClassShort}">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <#if mappingColumnModel.columnComment??><!-- ${mappingColumnModel.columnComment} -->  </#if><result column="${mappingColumnModel.column}" property="${mappingColumnModel.property}" jdbcType="${mappingColumnModel.jdbcType}"<#if mappingColumnModel.typeHandler??> typeHandler="${mappingColumnModel.typeHandler}"</#if>/>
+      </#list>
+    </resultMap>
+    
+    <!-- 
+          ################ Xbatis Generator 生成, 公共SQL开始,这些SQL仅用于构成操作表的SQL,以简化配置 ##################   
+     -->
+    
+    <!-- ${mappingModel.tableName} 表所有列 -->
+    <sql id="pubSelect">
+      SELECT 
+        <#list mappingModel.mappingColumnModelLst as mappingColumnModel>${mappingColumnModel.column}<#if mappingColumnModel_has_next>,</#if></#list>
+      FROM ${mappingModel.tableName} 
+    </sql>
+    
+    <!-- 插入sql -->
+    <sql id="pubInsert">  
+        INSERT INTO ${mappingModel.tableName} 
+          <dynamic prepend="(">
+          <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+            <isNotEmpty prepend="," property="${mappingColumnModel.property}">${mappingColumnModel.column}</isNotEmpty>
+          </#list>
+          </dynamic>
+          ) VALUES
+          <dynamic prepend="(">
+           <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+             <isNotEmpty prepend="," property="${mappingColumnModel.property}">#${mappingColumnModel.property}:${mappingColumnModel.jdbcType}#</isNotEmpty>
+          </#list>
+         </dynamic>
+         )
+    </sql>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录基础SQL,不能包含主键 -->
+    <sql id="pubUpdateColumns">
+       UPDATE ${mappingModel.tableName} 
+         <dynamic prepend="SET">
+         <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+           <#if !mappingColumnModel.primaryKey>
+           <isNotEmpty prepend="," property="${mappingColumnModel.property}">${mappingColumnModel.column} = #${mappingColumnModel.property}:${mappingColumnModel.jdbcType}#</isNotEmpty>
+           <#else>
+           <#t>
+           </#if>
+         </#list>
+         </dynamic>
+    </sql>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录基础SQL -->
+    <sql id="pubDelete">
+       DELETE FROM ${mappingModel.tableName}
+    </sql>
+    
+    <!-- ${mappingModel.tableName} 表主键 WHERE 条件 -->
+    <sql id="pubPkColumnsWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+          <#if mappingColumnModel.primaryKey>
+        AND ${mappingColumnModel.column} = #${mappingColumnModel.property}:${mappingColumnModel.jdbcType}#
+          <#else>
+              <#t>
+          </#if>
+      </#list>
+    </sql>
+  
+    <!-- ${mappingModel.tableName} 表所有列 WHERE 条件 -->
+    <sql id="pubAllColumnsWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <isNotEmpty prepend="AND" property="${mappingColumnModel.property}"> ${mappingColumnModel.column} = #${mappingColumnModel.property}:${mappingColumnModel.jdbcType}# </isNotEmpty>
+      </#list>
+    </sql>
+    
+    <!-- ${mappingModel.tableName} 表所有列 WHERE 条件, 加Cdn后缀作为HashMap键值,一般仅用于Update语名 -->
+    <sql id="pubAllColumnsUpdateWhere">
+      <#list mappingModel.mappingColumnModelLst as mappingColumnModel>
+        <isNotEmpty prepend="AND" property="${mappingColumnModel.property}Cdn"> ${mappingColumnModel.column} = #${mappingColumnModel.property}Cdn:${mappingColumnModel.jdbcType}# </isNotEmpty>
+      </#list>
+    </sql>
+    
+    <!-- 
+        ######################## Xbatis Generator 生成, 以下是对表进行增,查,改,删 ########################  
+     -->
+    
+    <!-- 向 ${mappingModel.tableName} 表新增记录 -->
+    <insert id="insert" parameterClass="${mappingModel.poClassShort}">  
+        <include refid="pubInsert"/>
+    </insert>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录, 传入参数是一个对象 -->
+    <update id="updateByPk" parameterClass="${mappingModel.poClassShort}">
+       <include refid="pubUpdateColumns"/>
+       <dynamic prepend="WHERE">
+       	   <include refid="pubPkColumnsWhere"/>
+       </dynamic>
+    </update>
+    
+    <!-- 修改 ${mappingModel.tableName} 表记录, 传入参数是一个java.util.HashMap, HashMap的条件值加Cdn后缀以区别Update Set的属性 -->
+    <update id="updateByHashMap" parameterClass="java.util.HashMap">
+       <include refid="pubUpdateColumns"/>
+       <dynamic prepend="WHERE">
+           <include refid="pubAllColumnsUpdateWhere"/>
+       </dynamic>
+    </update>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录, 传入参数是一个对象 -->
+    <delete id="deleteByPk" parameterClass="${mappingModel.poClassShort}">
+       <include refid="pubDelete"/>
+       <dynamic prepend="WHERE">
+       	   <include refid="pubPkColumnsWhere"/>
+       </dynamic>
+    </delete>
+    
+    <!-- 删除 ${mappingModel.tableName} 表记录, 传入参数是一个java.util.HashMap -->
+    <delete id="deleteByObj" parameterClass="${mappingModel.poClassShort}">
+       <include refid="pubDelete"/>
+       <dynamic prepend="WHERE">
+       	   <include refid="pubAllColumnsWhere"/>
+       </dynamic>
+    </delete>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是HashMap, 返回一个Object -->
+    <select  id="findObjByPk" parameterClass="${mappingModel.poClassShort}" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<dynamic prepend="WHERE">
+       	   <include refid="pubPkColumnsWhere"/>
+       	</dynamic>
+    </select>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是Object, 返回一个集合 -->
+    <select  id="queryLstByObj" parameterClass="${mappingModel.poClassShort}" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<dynamic prepend="WHERE">
+       	   <include refid="pubAllColumnsWhere"/>
+       	</dynamic>
+    </select>
+    
+    <!-- 所有列作为查询条件, 查询 ${mappingModel.tableName} 表所有列, 传入参数是Object, 返回一个集合 -->
+    <select  id="queryPageByObj" parameterClass="${mappingModel.poClassShort}" resultMap="allColumnsResultMap">
+       	<include refid="pubSelect"/>
+       	<dynamic prepend="WHERE">
+       	   <include refid="pubAllColumnsWhere"/>
+       	</dynamic>
+    </select>
+    
+    <!-- 查符合条件的记录数 -->
+    <select  id="queryPageByObj_COUNT" parameterClass="${mappingModel.poClassShort}" resultClass="java.lang.Integer">
+       	SELECT COUNT(1) FROM ${mappingModel.tableName}
+       	<dynamic prepend="WHERE">
+       	   <include refid="pubAllColumnsWhere"/>
+       	</dynamic>
+    </select>
+    
+     <!-- 
+        ########################################## 以下放置您的代码 ##########################################  
+      -->
+    
+</sqlMap>  

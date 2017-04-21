@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="partConfigParser">
+	<daoMappingTemplates>
+		<daoMappingTemplate id="MT01" type="mybatis" enable="true">
+		    <name>通用 Mybatis SQL 分页 DAO 模板</name>
+		    <daoInterfaceTemplateFilePath>config/templates/mybatis_comm/mybatis_comm_interface.flt</daoInterfaceTemplateFilePath>
+		    <daoMappingTemplateFilePath>config/templates/mybatis_comm/mybatis_comm_mapping.flt</daoMappingTemplateFilePath>
+		    <remark>通用Mybatis模板, SQL分页面</remark>
+		</daoMappingTemplate>
+	</daoMappingTemplates>
+</huiWanpengRoot>

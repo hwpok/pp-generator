@@ -1,0 +1,111 @@
+<#-- 生成package信息 -->
+<#if daoModel.daoClassPackageName??>package ${daoModel.daoClassPackageName};</#if>
+
+import java.util.List;
+import java.util.HashMap;
+
+import org.springframework.stereotype.Component;
+import com.ccb.jrsc.util.dos.BaseDos;
+import com.ccb.openframework.persist.PaginationSupport;
+
+<#-- 生成import信息 -->
+<#list daoModel.importClassSet as clazz>
+import ${clazz};
+</#list>
+
+/**
+ * ${daoModel.tableName}<#if daoModel.tableComment??>[${daoModel.tableComment}]</#if> DOS
+ * Generate by Xbatis Generator 
+ * Create time ${daoModel.createTime?string("yyyy/MM/dd HH:mm:ss")} 
+ */
+ @Component("${daoModel.daoClassShort}")
+ public class ${daoModel.daoClassShort} extends BaseDos{
+    
+    /** 
+     * 得到命名空间 
+     * @param sqlId
+     */
+    private static String getOprSql(String sqlId){
+       return "${daoModel.daoClassPackageName}.${daoModel.daoClassShort}." + sqlId;
+    }
+    
+    /**
+     * 新增记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     */
+    public int insert(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first}){
+        return persistService.insertBySqlMap(getOprSql("insert"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据主键修改记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     */
+    public int updateByPk(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first}){
+        return persistService.updateBySqlMap(getOprSql("updateByPk"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据HashMap修改记录
+     * @param hashMap
+     */
+    public int updateByHashMap(HashMap<String, Object> hashMap){
+        return persistService.updateBySqlMap(getOprSql("updateByHashMap"), hashMap);
+    }
+    
+    /**
+     * 根据主键删除的记录
+     <#list daoModel.daoPkModelLst as daoPkModel>
+     * @param ${daoPkModel.property}
+     </#list>
+     */
+    public int deleteByPk(<#list daoModel.daoPkModelLst as daoPkModel>${daoPkModel.javaTypeShort} ${daoPkModel.property}<#if daoPkModel_has_next>, </#if></#list>){
+        ${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first} = new ${daoModel.poClassShort}();
+        <#list daoModel.daoPkModelLst as daoPkModel>
+        ${daoModel.poClassShort?uncap_first}.set${daoPkModel.property?cap_first}(${daoPkModel.property});  <#if daoPkModel.columnComment??>// 设置${daoPkModel.columnComment}</#if>
+        </#list>
+        return persistService.deleteBySqlMap(getOprSql("deleteByPk"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据对象删除记录
+     * @param ${daoModel.poClassShort?uncap_first}
+     */
+    public int deleteByObj(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first}){
+        return persistService.deleteBySqlMap(getOprSql("deleteByObj"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据主键查询的记录
+     <#list daoModel.daoPkModelLst as daoPkModel>
+     * @param ${daoPkModel.property}
+     </#list>
+     */
+    public ${daoModel.poClassShort} findObjByPk(<#list daoModel.daoPkModelLst as daoPkModel>${daoPkModel.javaTypeShort} ${daoPkModel.property}<#if daoPkModel_has_next>, </#if></#list>){
+        ${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first} = new ${daoModel.poClassShort}();
+        <#list daoModel.daoPkModelLst as daoPkModel>
+        ${daoModel.poClassShort?uncap_first}.set${daoPkModel.property?cap_first}(${daoPkModel.property});  <#if daoPkModel.columnComment??>// 设置${daoPkModel.columnComment}</#if>
+        </#list>
+        return (${daoModel.poClassShort})persistService.findObjectBySqlMap(getOprSql("findObjByPk"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据对象查询, 查询结果为集合
+     * @param ${daoModel.poClassShort?uncap_first}
+     */
+     @SuppressWarnings("unchecked")
+    public List<${daoModel.poClassShort}> queryLstByObj(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first}, int pageNum, int pageSize){
+        return (List<${daoModel.poClassShort}>)persistService.findListBySqlMap(getOprSql("queryLstByObj"), ${daoModel.poClassShort?uncap_first});
+    }
+    
+    /**
+     * 根据对象查询, 查询结果为分页对象
+     * @param ${daoModel.poClassShort?uncap_first}
+     */
+    @SuppressWarnings("unchecked")
+    public PaginationSupport<${daoModel.poClassShort}> queryPageByObj(${daoModel.poClassShort} ${daoModel.poClassShort?uncap_first}, int pageNum, int pageSize){
+        return (PaginationSupport<${daoModel.poClassShort}>)persistService.findPaginatedBySqlMap(getOprSql("queryPageByObj"), ${daoModel.poClassShort?uncap_first}, (pageNum-1)*pageSize, pageSize);
+    }
+ 
+ }
+ 

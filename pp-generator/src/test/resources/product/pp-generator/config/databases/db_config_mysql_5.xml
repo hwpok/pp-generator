@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<huiWanpengRoot parserName="dbConfigParser">
+	<database id="DB_MYSQL_01" enable="true">
+	
+	    <!-- 数据库名称, 配置文件相对路径, 说明备注 -->
+	    <name>My SQL 5+</name>
+		<configFilePath>config/databases/db_config_mysql_5.xml</configFilePath>
+		<remark>My SQL  数据库 Version 5.0 以上</remark>
+	
+		<!-- 数据类型, 数据库驱动, 数据连接样例 -->
+		<dbType>mysql</dbType>
+		<driver>com.mysql.jdbc.Driver</driver>
+		<connectUrlExample>jdbc:mysql://127.0.0.1:3306/YourDBName</connectUrlExample>
+
+		<sqls>
+			<!-- 通过表名查找表信息 -->
+			<selectTableSql>
+				<mainSql>
+					SELECT
+					    table_name,
+					    table_comment
+					FROM information_schema.tables
+					WHERE 1=1
+				</mainSql>
+				<conditionEqual>AND table_name = '?'</conditionEqual>
+				<conditionLike>AND table_name LIKE '%?%'</conditionLike>
+			</selectTableSql>
+
+			<!-- 通过表名查找指定表的所有列信息 -->
+			<selectColumnSql>
+				SELECT
+					column_name,
+					column_comment,
+					data_type,
+					character_maximum_length,
+					numeric_precision,
+					numeric_scale,
+					column_key,
+					is_nullable
+				FROM information_schema.columns
+				WHERE table_name = '?'
+				ORDER BY ordinal_position ASC
+			</selectColumnSql>
+			
+			<!-- 数据库分页SQL, -->
+			<pageSql>
+			    <startPageSql></startPageSql>
+			    <endPageSql>LIMIT @offsetIndex@,  @pageSize@</endPageSql>
+			</pageSql>
+		</sqls>
+
+		<!-- 字段值映射 -->
+		<columnValueMapping>
+			<!-- column_key的值为PRI时,表示该字段为主键 -->
+			<primaryKeyToBoolean>PRI</primaryKeyToBoolean>
+			<!-- is_nullable的值为YES,表可该字段允许为空 -->
+			<nullableToBoolean>YES</nullableToBoolean>
+		</columnValueMapping>
+
+		<!-- 字段型映射 -->
+		<columnTypeMapping>
+
+			<!-- 字符型 -->
+			<columnType name="CHAR">
+				<jdbcType>CHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+			<columnType name="VARCHAR|TINYTEXT|TEXT|MEDIUMTEXT|LONGTEXT" globalDefault="true">
+				<jdbcType>VARCHAR</jdbcType>
+				<javaType>java.lang.String</javaType>
+			</columnType>
+
+			<!-- 整型 -->
+			<columnType name="TINYINT">
+				<jdbcType>TINYINT</jdbcType>
+				<javaType>byte</javaType>
+				<javaTypeWrapped>java.lang.Short</javaTypeWrapped>
+			</columnType>
+			<columnType name="SMALLINT">
+				<jdbcType>SMALLINT</jdbcType>
+				<javaType>short</javaType>
+				<javaTypeWrapped>java.lang.Short</javaTypeWrapped>
+			</columnType>
+			<columnType name="MEDIUMINT|INT">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+			<columnType name="BIGINT">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL|NUMERIC" numericPrecisionMin="1" numericPrecisionMax="9">
+				<jdbcType>INTEGER</jdbcType>
+				<javaType>int</javaType>
+				<javaTypeWrapped>java.lang.Integer</javaTypeWrapped>
+			</columnType>
+            <columnType name="DECIMAL|NUMERIC" numericPrecisionMin="10" numericPrecisionMax="18">
+				<jdbcType>BIGINT</jdbcType>
+				<javaType>long</javaType>
+				<javaTypeWrapped>java.lang.Long</javaTypeWrapped>
+			</columnType>
+			
+			<!-- 非整型 -->
+			<columnType name="FLOAT">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>float</javaType>
+				<javaTypeWrapped>java.lang.Float</javaTypeWrapped>
+			</columnType>
+			<columnType name="DOUBLE">
+				<jdbcType>DOUBLE</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.DOUBLE</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL|NUMERIC">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.math.BigDecimal</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL|NUMERIC" numericPrecisionMin="1" numericPrecisionMax="10" numericScaleMin="1" numericScaleMax="4">
+				<jdbcType>FLOAT</jdbcType>
+				<javaType>double</javaType>
+				<javaTypeWrapped>java.lang.Double</javaTypeWrapped>
+			</columnType>
+			<columnType name="DECIMAL|NUMERIC" numericPrecisionMin="1" numericPrecisionMax="31" numericScaleMin="1" numericScaleMax="16">
+				<jdbcType>DECIMAL</jdbcType>
+				<javaType>java.math.BigDecimal</javaType>
+			</columnType>
+
+			<!-- 逻辑型 -->
+			<columnType name="BOOL|BOOLEAN">
+				<jdbcType>BOOL</jdbcType>
+				<javaType>boolean</javaType>
+				<javaTypeWrapped>java.math.BigDecimal</javaTypeWrapped>
+			</columnType>
+
+			<!-- 日期时间型 -->
+			<columnType name="DATE">
+				<jdbcType>DATE</jdbcType>
+				<javaType>java.sql.Date</javaType>
+			</columnType>
+			<columnType name="TIME">
+				<jdbcType>TIME</jdbcType>
+				<javaType>java.sql.Time</javaType>
+			</columnType>
+			<columnType name="DATETIME">
+			    <!-- DATETIME不兼容ibatis和Mybatis, TIMESTAMP兼容  -->
+				<jdbcType>TIMESTAMP</jdbcType>
+				<javaType>java.util.Date</javaType>
+			</columnType>
+			<columnType name="TIMESTAMP">
+				<jdbcType>TIMESTAMP</jdbcType>
+				<javaType>java.sql.Timestamp</javaType>
+			</columnType>
+
+			<!-- 大对象类型 -->
+			<columnType name="BLOB">
+				<jdbcType>BLOB</jdbcType>
+				<javaType>java.sql.Blob</javaType>
+			</columnType>
+
+		</columnTypeMapping>
+	</database>
+</huiWanpengRoot>
